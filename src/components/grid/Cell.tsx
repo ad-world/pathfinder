@@ -1,5 +1,7 @@
 import { Td } from "@chakra-ui/react";
 import { GraphNode } from "../../types";
+import { Colors } from "../../util/colors";
+import { CellSizePixels } from "../../util/util";
 
 interface CellProps {
   cell: GraphNode;
@@ -9,17 +11,17 @@ interface CellProps {
 
 const Cell: React.FC<CellProps> = ({ cell, row, col }) => {
   const getBgColor = (cell: GraphNode) => {
-    if (cell.isStart) return "green.500";
-    if (cell.isFinish) return "red.500";
-    if (cell.isWall) return "black";
-    return "white";
+    if (cell.isStart) return Colors.StartingNode;
+    if (cell.isFinish) return Colors.EndingNode;
+    if (cell.isWall) return Colors.WallNode;
+    return Colors.EmptyNode;
   };
 
   const getBgHover = (cell: GraphNode) => {
-    if (cell.isStart) return "green.300";
-    if (cell.isFinish) return "red.300";
-    if (cell.isWall) return "gray.700";
-    return "gray.200";
+    if (cell.isStart) return Colors.StartingNodeHover;
+    if (cell.isFinish) return Colors.EndingNodeHover;
+    if (cell.isWall) return Colors.WallNodeHover;
+    return Colors.EmptyNodeHover;
   };
 
   return (
@@ -29,10 +31,10 @@ const Cell: React.FC<CellProps> = ({ cell, row, col }) => {
       key={`${row}_${col}`}
       borderColor={"blue.300"}
       border={"1px"}
-      maxH="35px"
-      maxW="35px"
-      minH="35px"
-      minW="35px"
+      maxH={CellSizePixels}
+      maxW={CellSizePixels}
+      minH={CellSizePixels}
+      minW={CellSizePixels}
       padding={3}
       _hover={{ bgColor: getBgHover(cell) }}
     ></Td>

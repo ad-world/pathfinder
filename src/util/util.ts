@@ -5,6 +5,9 @@ export const START_NODE_COL = 10;
 export const FINISH_NODE_ROW = 10;
 export const FINISH_NODE_COL = 30;
 
+export const CellSizeNumber = 35;
+export const CellSizePixels = "35px";
+
 export function calculateGridDimensions(
   screenWidth: number,
   screenHeight: number,
@@ -57,4 +60,3 @@ export const getNewGrid = (
   newGrid[row][col] = newNode;
   return newGrid;
 };
-

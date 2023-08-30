@@ -1,6 +1,7 @@
-import { Box, Button, HStack, Heading, Select } from "@chakra-ui/react";
-import { createGrid } from "../../util/util";
+import { Box, Button, HStack, Heading, Select, Text } from "@chakra-ui/react";
+import { CellSizePixels, createGrid } from "../../util/util";
 import { GraphNode } from "../../types";
+import { Colors } from "../../util/colors";
 
 enum Algorithms {
   BFS = "Breadth First Search (BFS)",
@@ -24,7 +25,7 @@ const Navigation: React.FC<NavigationProps> = ({ cellGrid, setCellGrid }) => {
       <HStack justifyContent={"space-between"}>
         <HStack gap={8}>
           <Heading size={"md"}>Pathfinder</Heading>
-          <Select>
+          <Select w={52}>
             <option>Choose Algorithm</option>
             {Object.entries(Algorithms).map((item) => {
               return (
@@ -34,9 +35,42 @@ const Navigation: React.FC<NavigationProps> = ({ cellGrid, setCellGrid }) => {
               );
             })}
           </Select>
-          <Button px={6} colorScheme="red" onClick={resetGrid}>
+          <Button px={4} colorScheme="red" onClick={resetGrid}>
             Clear Board
           </Button>
+          <HStack gap={4}>
+            <Box
+              minW={CellSizePixels}
+              minH={CellSizePixels}
+              bgColor={Colors.StartingNode}
+            ></Box>
+            <Text>Starting Node</Text>
+          </HStack>
+          <HStack gap={4}>
+            <Box
+              minW={CellSizePixels}
+              minH={CellSizePixels}
+              bgColor={Colors.EndingNode}
+            ></Box>
+            <Text>Ending Node</Text>
+          </HStack>
+          <HStack gap={4}>
+            <Box
+              minW={CellSizePixels}
+              minH={CellSizePixels}
+              bgColor={Colors.WallNode}
+            ></Box>
+            <Text>Wall Node</Text>
+          </HStack>
+          <HStack gap={4}>
+            <Box
+              minW={CellSizePixels}
+              minH={CellSizePixels}
+              bgColor={Colors.EmptyNode}
+              border={"1px solid"}
+            ></Box>
+            <Text>Empty Node</Text>
+          </HStack>
         </HStack>
 
         <HStack>

@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react";
 import Navigation from "../../components/navigation/Navigation";
-import { createGrid } from "../../util/util";
+import { CellSizePixels, createGrid } from "../../util/util";
 import { Table, TableContainer, Tbody, Tr } from "@chakra-ui/react";
 import Cell from "../../components/grid/Cell";
 import { GraphNode } from "../../types";
 
 const Pathfinder = () => {
-  // const screenWidth = window.screen.width;
-  // const screenHeight = window.screen.height;
   const rows = 19;
   const columns = 40;
 
@@ -58,34 +56,36 @@ const Pathfinder = () => {
 
           if (!isMovingStart && !oldStartNode && !isMovingEnd && !oldEndNode) {
             copy[row][col].isWall = true;
-            setCellGrid(copy);
           } else if (isMovingStart) {
             if (oldStartNode) {
               copy[oldStartNode.row][oldStartNode.col].isStart = false;
-              setOldStartNode(copy[row][col]);
             }
+            setOldStartNode(copy[row][col]);
             copy[row][col].isStart = true;
-            setCellGrid(copy);
+            copy[row][col].isWall = false;
           } else if (isMovingEnd) {
             if (oldEndNode) {
               copy[oldEndNode.row][oldEndNode.col].isFinish = false;
-              setOldEndNode(copy[row][col]);
             }
+            setOldEndNode(copy[row][col]);
             copy[row][col].isFinish = true;
-            setCellGrid(copy);
+            copy[row][col].isWall = false;
           }
+          setCellGrid(copy);
         }
       }
     };
     document.onmouseup = (ev: MouseEvent) => {
-      if (ev.clientX && isMovingStart) {
+      if (ev.clientX) {
         // console.log(ev.clientX);
         // console.log(ev.clientY);
       }
+    
+      setIsMouseDown(false);
+      setIsMovingEnd(false);
+      setIsMovingStart(false);
       setOldStartNode(null);
       setOldEndNode(null);
-      setIsMouseDown(false);
-      setIsMovingStart(false);
     };
   }, [
     isMouseDown,
@@ -112,7 +112,7 @@ const Pathfinder = () => {
           <Tbody>
             {cellGrid.map((row, row_ind) => {
               return (
-                <Tr h={"35px"}>
+                <Tr h={CellSizePixels}>
                   {row.map((cell, col_ind) => {
                     return <Cell col={col_ind} row={row_ind} cell={cell} />;
                   })}
