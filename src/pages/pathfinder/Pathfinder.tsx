@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import Navigation from "../../components/navigation/Navigation";
-import {
-  createGrid,
-} from "../../util/util";
+import { createGrid } from "../../util/util";
 import { Table, TableContainer, Tbody, Tr } from "@chakra-ui/react";
 import Cell from "../../components/grid/Cell";
 import { GraphNode } from "../../types";
@@ -10,7 +8,7 @@ import { GraphNode } from "../../types";
 const Pathfinder = () => {
   // const screenWidth = window.screen.width;
   // const screenHeight = window.screen.height;
-  const rows = 20;
+  const rows = 19;
   const columns = 40;
 
   const [cellGrid, setCellGrid] = useState(createGrid(rows, columns));
@@ -49,44 +47,26 @@ const Pathfinder = () => {
     };
     document.onmousemove = (ev: MouseEvent) => {
       if (ev.clientX) {
-        if (!isMovingStart && !oldStartNode && !isMovingEnd && !oldEndNode) {
-          const x = ev.clientX;
-          const y = ev.clientY;
-          const targetEl = document.elementFromPoint(x, y)?.id;
-          if (targetEl && ev.buttons == 1) {
-            const pos = targetEl.split("_");
-            const copy = [...cellGrid];
-            const row = Number(pos[0]);
-            const col = Number(pos[1]);
+        const x = ev.clientX;
+        const y = ev.clientY;
+        const targetEl = document.elementFromPoint(x, y)?.id;
+        if (targetEl && ev.buttons == 1) {
+          const pos = targetEl.split("_");
+          const copy = [...cellGrid];
+          const row = Number(pos[0]);
+          const col = Number(pos[1]);
 
+          if (!isMovingStart && !oldStartNode && !isMovingEnd && !oldEndNode) {
             copy[row][col].isWall = true;
             setCellGrid(copy);
-          }
-        } else if (isMovingStart) {
-          const x = ev.clientX;
-          const y = ev.clientY;
-          const targetEl = document.elementFromPoint(x, y)?.id;
-          if (targetEl && ev.buttons == 1) {
-            const pos = targetEl.split("_");
-            const copy = [...cellGrid];
-            const row = Number(pos[0]);
-            const col = Number(pos[1]);
+          } else if (isMovingStart) {
             if (oldStartNode) {
               copy[oldStartNode.row][oldStartNode.col].isStart = false;
               setOldStartNode(copy[row][col]);
             }
             copy[row][col].isStart = true;
             setCellGrid(copy);
-          }
-        } else if (isMovingEnd) {
-          const x = ev.clientX;
-          const y = ev.clientY;
-          const targetEl = document.elementFromPoint(x, y)?.id;
-          if (targetEl && ev.buttons == 1) {
-            const pos = targetEl.split("_");
-            const copy = [...cellGrid];
-            const row = Number(pos[0]);
-            const col = Number(pos[1]);
+          } else if (isMovingEnd) {
             if (oldEndNode) {
               copy[oldEndNode.row][oldEndNode.col].isFinish = false;
               setOldEndNode(copy[row][col]);
@@ -115,7 +95,7 @@ const Pathfinder = () => {
     setOldEndNode,
     oldStartNode,
     oldEndNode,
-    isMovingEnd
+    isMovingEnd,
   ]);
 
   return (
@@ -132,7 +112,7 @@ const Pathfinder = () => {
           <Tbody>
             {cellGrid.map((row, row_ind) => {
               return (
-                <Tr h={"40px"}>
+                <Tr h={"35px"}>
                   {row.map((cell, col_ind) => {
                     return <Cell col={col_ind} row={row_ind} cell={cell} />;
                   })}

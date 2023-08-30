@@ -29,10 +29,10 @@ const Cell: React.FC<CellProps> = ({ cell, row, col }) => {
       key={`${row}_${col}`}
       borderColor={"blue.300"}
       border={"1px"}
-      maxH="40px"
-      maxW="40px"
-      minH="40px"
-      minW="40px"
+      maxH="35px"
+      maxW="35px"
+      minH="35px"
+      minW="35px"
       padding={3}
       _hover={{ bgColor: getBgHover(cell) }}
     ></Td>

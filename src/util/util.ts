@@ -1,9 +1,9 @@
 import { GraphNode } from "../types";
 
 export const START_NODE_ROW = 10;
-export const START_NODE_COL = 15;
+export const START_NODE_COL = 10;
 export const FINISH_NODE_ROW = 10;
-export const FINISH_NODE_COL = 35;
+export const FINISH_NODE_COL = 30;
 
 export function calculateGridDimensions(
   screenWidth: number,
