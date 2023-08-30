@@ -1,46 +1,122 @@
-import { useCallback, useMemo, useState } from "react";
-import PathGrid from "../../components/grid/Grid";
+import { useEffect, useState } from "react";
 import Navigation from "../../components/navigation/Navigation";
 import {
-  calculateGridDimensions,
   createGrid,
-  getNewGrid,
 } from "../../util/util";
-import { Table, TableContainer, Tbody, Td, Tr } from "@chakra-ui/react";
-import { ArrowRightIcon, ChevronRightIcon } from "@chakra-ui/icons";
+import { Table, TableContainer, Tbody, Tr } from "@chakra-ui/react";
+import Cell from "../../components/grid/Cell";
+import { GraphNode } from "../../types";
 
 const Pathfinder = () => {
-  const screenWidth = window.screen.width;
-  const screenHeight = window.screen.height;
-  const rows = 27;
-  const columns = 60;
-  // const { rows, columns } = useMemo(
-  //   () => calculateGridDimensions(screenWidth, screenHeight * 0.8, 20),
-  //   [screenHeight, screenWidth]
-  // );
+  // const screenWidth = window.screen.width;
+  // const screenHeight = window.screen.height;
+  const rows = 20;
+  const columns = 40;
 
   const [cellGrid, setCellGrid] = useState(createGrid(rows, columns));
   const [isMouseDown, setIsMouseDown] = useState<boolean>(false);
+  const [isMovingStart, setIsMovingStart] = useState<boolean>(false);
+  const [isMovingEnd, setIsMovingEnd] = useState<boolean>(false);
+  const [oldStartNode, setOldStartNode] = useState<GraphNode | null>(null);
+  const [oldEndNode, setOldEndNode] = useState<GraphNode | null>(null);
 
-  const handleMouseDown = useCallback(
-    (row: number, col: number) => {
-      const newGrid = getNewGrid(cellGrid, row, col);
-      setCellGrid(newGrid);
+  useEffect(() => {
+    document.onmousedown = (ev: MouseEvent) => {
       setIsMouseDown(true);
-    },
-    [cellGrid]
-  );
+      if (ev.clientX) {
+        const x = ev.clientX;
+        const y = ev.clientY;
 
-  const handleMouseEnter = useCallback(
-    (row: number, col: number) => {
-      if (!isMouseDown) return;
-      const newGrid = getNewGrid(cellGrid, row, col);
-      setCellGrid(newGrid);
-    },
-    [cellGrid, setCellGrid, isMouseDown]
-  );
+        const targetEl = document.elementFromPoint(x, y)?.id;
+        if (targetEl) {
+          const pos = targetEl.split("_");
+          const row = Number(pos[0]);
+          const col = Number(pos[1]);
 
-  const handleMouseUp = () => setIsMouseDown(false);
+          if (cellGrid[row][col].isStart) {
+            setOldStartNode(cellGrid[row][col]);
+            setIsMovingStart(true);
+          } else if (cellGrid[row][col].isFinish) {
+            setOldEndNode(cellGrid[row][col]);
+            setIsMovingEnd(true);
+          } else {
+            const copy = [...cellGrid];
+            copy[row][col].isWall = true;
+            setCellGrid(copy);
+          }
+        }
+      }
+    };
+    document.onmousemove = (ev: MouseEvent) => {
+      if (ev.clientX) {
+        if (!isMovingStart && !oldStartNode && !isMovingEnd && !oldEndNode) {
+          const x = ev.clientX;
+          const y = ev.clientY;
+          const targetEl = document.elementFromPoint(x, y)?.id;
+          if (targetEl && ev.buttons == 1) {
+            const pos = targetEl.split("_");
+            const copy = [...cellGrid];
+            const row = Number(pos[0]);
+            const col = Number(pos[1]);
+
+            copy[row][col].isWall = true;
+            setCellGrid(copy);
+          }
+        } else if (isMovingStart) {
+          const x = ev.clientX;
+          const y = ev.clientY;
+          const targetEl = document.elementFromPoint(x, y)?.id;
+          if (targetEl && ev.buttons == 1) {
+            const pos = targetEl.split("_");
+            const copy = [...cellGrid];
+            const row = Number(pos[0]);
+            const col = Number(pos[1]);
+            if (oldStartNode) {
+              copy[oldStartNode.row][oldStartNode.col].isStart = false;
+              setOldStartNode(copy[row][col]);
+            }
+            copy[row][col].isStart = true;
+            setCellGrid(copy);
+          }
+        } else if (isMovingEnd) {
+          const x = ev.clientX;
+          const y = ev.clientY;
+          const targetEl = document.elementFromPoint(x, y)?.id;
+          if (targetEl && ev.buttons == 1) {
+            const pos = targetEl.split("_");
+            const copy = [...cellGrid];
+            const row = Number(pos[0]);
+            const col = Number(pos[1]);
+            if (oldEndNode) {
+              copy[oldEndNode.row][oldEndNode.col].isFinish = false;
+              setOldEndNode(copy[row][col]);
+            }
+            copy[row][col].isFinish = true;
+            setCellGrid(copy);
+          }
+        }
+      }
+    };
+    document.onmouseup = (ev: MouseEvent) => {
+      if (ev.clientX && isMovingStart) {
+        // console.log(ev.clientX);
+        // console.log(ev.clientY);
+      }
+      setOldStartNode(null);
+      setOldEndNode(null);
+      setIsMouseDown(false);
+      setIsMovingStart(false);
+    };
+  }, [
+    isMouseDown,
+    cellGrid,
+    isMovingStart,
+    setOldStartNode,
+    setOldEndNode,
+    oldStartNode,
+    oldEndNode,
+    isMovingEnd
+  ]);
 
   return (
     <>
@@ -56,32 +132,9 @@ const Pathfinder = () => {
           <Tbody>
             {cellGrid.map((row, row_ind) => {
               return (
-                <Tr>
-                  {row.map((col, col_ind) => {
-                    return (
-                      <Td
-                        children={
-                          col.isStart ? (
-                            <ArrowRightIcon
-                              padding={0}
-                              margin={0}
-                              onDrag={() => console.log("dragged")}
-                            />
-                          ) : null
-                        }
-                        backgroundColor={col.isWall ? "black" : "white"}
-                        onMouseDown={() => handleMouseDown(row_ind, col_ind)}
-                        onMouseEnter={() => handleMouseEnter(row_ind, col_ind)}
-                        onMouseUp={handleMouseUp}
-                        key={`${row_ind}_${col_ind}`}
-                        borderColor={"blue.300"}
-                        border={"1px"}
-                        maxH="20px"
-                        maxW="20px"
-                        padding={col.isStart || col.isFinish ? 0 : 3}
-                        _hover={{ bgColor: "gray.200" }}
-                      ></Td>
-                    );
+                <Tr h={"40px"}>
+                  {row.map((cell, col_ind) => {
+                    return <Cell col={col_ind} row={row_ind} cell={cell} />;
                   })}
                 </Tr>
               );

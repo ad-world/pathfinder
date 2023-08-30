@@ -1,42 +1,41 @@
-import { GridItem } from "@chakra-ui/react";
-import { Children, ReactElement } from "react";
+import { Td } from "@chakra-ui/react";
+import { GraphNode } from "../../types";
 
 interface CellProps {
-  state: number;
+  cell: GraphNode;
   row: number;
   col: number;
-  onClick: () => void;
-  isMouseDown: boolean;
-  children?: ReactElement;
 }
 
+const Cell: React.FC<CellProps> = ({ cell, row, col }) => {
+  const getBgColor = (cell: GraphNode) => {
+    if (cell.isStart) return "green.500";
+    if (cell.isFinish) return "red.500";
+    if (cell.isWall) return "black";
+    return "white";
+  };
 
+  const getBgHover = (cell: GraphNode) => {
+    if (cell.isStart) return "green.300";
+    if (cell.isFinish) return "red.300";
+    if (cell.isWall) return "gray.700";
+    return "gray.200";
+  };
 
-const Cell: React.FC<CellProps> = ({
-  state,
-  row,
-  col,
-  onClick,
-  isMouseDown,
-  children,
-}) => {
   return (
-    <GridItem
-      onClick={onClick}
-      onMouseEnter={() => (isMouseDown ? onClick() : null)}
-      backgroundColor={state == 0 ? "white" : "black"}
-      transition={"ease-in-out"}
-      transitionDuration={"100ms"}
-      borderColor={"black"}
-      rounded={"none"}
-      padding={0}
-      margin={0}
-      borderLeft={"1px"}
-      borderTop={"1px"}
-      _hover={{ bgColor: "gray.300" }}
-    >
-      {children}
-    </GridItem>
+    <Td
+      id={`${row}_${col}`}
+      backgroundColor={getBgColor(cell)}
+      key={`${row}_${col}`}
+      borderColor={"blue.300"}
+      border={"1px"}
+      maxH="40px"
+      maxW="40px"
+      minH="40px"
+      minW="40px"
+      padding={3}
+      _hover={{ bgColor: getBgHover(cell) }}
+    ></Td>
   );
 };
 
