@@ -1,24 +1,43 @@
 import { useEffect, useState } from "react";
 import Navigation from "../../components/navigation/Navigation";
-import { CellSizePixels, createGrid } from "../../util/util";
+import {
+  CellSizePixels,
+  createGrid,
+  removeDuplicateBasedOnFinalCell,
+} from "../../util/util";
 import { Table, TableContainer, Tbody, Tr } from "@chakra-ui/react";
 import Cell from "../../components/grid/Cell";
 import { GraphNode } from "../../types";
+
+interface GridState {
+  isMouseDown: boolean;
+  isMovingStart: boolean;
+  isMovingEnd: boolean;
+  oldStartNode: GraphNode | null;
+  oldEndNode: GraphNode | null;
+  oldWallNode: GraphNode | null;
+}
 
 const Pathfinder = () => {
   const rows = 19;
   const columns = 40;
 
   const [cellGrid, setCellGrid] = useState(createGrid(rows, columns));
-  const [isMouseDown, setIsMouseDown] = useState<boolean>(false);
-  const [isMovingStart, setIsMovingStart] = useState<boolean>(false);
-  const [isMovingEnd, setIsMovingEnd] = useState<boolean>(false);
-  const [oldStartNode, setOldStartNode] = useState<GraphNode | null>(null);
-  const [oldEndNode, setOldEndNode] = useState<GraphNode | null>(null);
+  const [gridState, setGridState] = useState<GridState>({
+    isMouseDown: false,
+    isMovingEnd: false,
+    isMovingStart: false,
+    oldStartNode: null,
+    oldEndNode: null,
+    oldWallNode: null,
+  });
 
   useEffect(() => {
     document.onmousedown = (ev: MouseEvent) => {
-      setIsMouseDown(true);
+      setGridState({
+        ...gridState,
+        isMouseDown: true,
+      });
       if (ev.clientX) {
         const x = ev.clientX;
         const y = ev.clientY;
@@ -30,14 +49,24 @@ const Pathfinder = () => {
           const col = Number(pos[1]);
 
           if (cellGrid[row][col].isStart) {
-            setOldStartNode(cellGrid[row][col]);
-            setIsMovingStart(true);
+            setGridState({
+              ...gridState,
+              oldStartNode: cellGrid[row][col],
+              isMovingStart: true,
+            });
           } else if (cellGrid[row][col].isFinish) {
-            setOldEndNode(cellGrid[row][col]);
-            setIsMovingEnd(true);
+            setGridState({
+              ...gridState,
+              oldEndNode: cellGrid[row][col],
+              isMovingEnd: true,
+            });
           } else {
             const copy = [...cellGrid];
-            copy[row][col].isWall = true;
+            copy[row][col].isWall = !copy[row][col].isWall;
+            setGridState({
+              ...gridState,
+              oldWallNode: copy[row][col],
+            });
             setCellGrid(copy);
           }
         }
@@ -50,71 +79,111 @@ const Pathfinder = () => {
         const targetEl = document.elementFromPoint(x, y)?.id;
         if (targetEl && ev.buttons == 1) {
           const pos = targetEl.split("_");
-          const copy = [...cellGrid];
+          let copy = [...cellGrid];
           const row = Number(pos[0]);
           const col = Number(pos[1]);
 
-          if (!isMovingStart && !oldStartNode && !isMovingEnd && !oldEndNode) {
+          if (!gridState.isMovingStart && !gridState.isMovingEnd) {
             copy[row][col].isWall = true;
-          } else if (isMovingStart) {
-            if (oldStartNode) {
-              copy[oldStartNode.row][oldStartNode.col].isStart = false;
+          } else if (gridState.isMovingStart) {
+            if (gridState.oldStartNode) {
+              copy[gridState.oldStartNode.row][
+                gridState.oldStartNode.col
+              ].isStart = false;
             }
-            setOldStartNode(copy[row][col]);
             copy[row][col].isStart = true;
             copy[row][col].isWall = false;
-          } else if (isMovingEnd) {
-            if (oldEndNode) {
-              copy[oldEndNode.row][oldEndNode.col].isFinish = false;
+            setGridState({
+              ...gridState,
+              oldStartNode: copy[row][col],
+            });
+            copy = removeDuplicateBasedOnFinalCell(row, col, "start", cellGrid);
+          } else if (gridState.isMovingEnd) {
+            if (gridState.oldEndNode) {
+              copy[gridState.oldEndNode.row][
+                gridState.oldEndNode.col
+              ].isFinish = false;
             }
-            setOldEndNode(copy[row][col]);
             copy[row][col].isFinish = true;
             copy[row][col].isWall = false;
+            setGridState({
+              ...gridState,
+              oldEndNode: copy[row][col],
+            });
+
+            copy = removeDuplicateBasedOnFinalCell(
+              row,
+              col,
+              "finish",
+              cellGrid
+            );
           }
+
           setCellGrid(copy);
         }
       }
     };
     document.onmouseup = (ev: MouseEvent) => {
       if (ev.clientX) {
-        // console.log(ev.clientX);
-        // console.log(ev.clientY);
+        const x = ev.clientX;
+        const y = ev.clientY;
+
+        const target = document.elementFromPoint(x, y)?.id;
+        if (target) {
+          const split = target.split("_");
+          const row = Number(split[0]);
+          const col = Number(split[1]);
+
+          if (gridState.isMovingStart) {
+            const newGrid = removeDuplicateBasedOnFinalCell(
+              row,
+              col,
+              "start",
+              cellGrid
+            );
+            setCellGrid(newGrid);
+          }
+          if (gridState.isMovingEnd) {
+            const newGrid = removeDuplicateBasedOnFinalCell(
+              row,
+              col,
+              "finish",
+              cellGrid
+            );
+            setCellGrid(newGrid);
+          }
+        }
       }
-    
-      setIsMouseDown(false);
-      setIsMovingEnd(false);
-      setIsMovingStart(false);
-      setOldStartNode(null);
-      setOldEndNode(null);
+
+      setGridState({
+        isMouseDown: false,
+        isMovingEnd: false,
+        isMovingStart: false,
+        oldStartNode: null,
+        oldEndNode: null,
+        oldWallNode: null,
+      });
     };
-  }, [
-    isMouseDown,
-    cellGrid,
-    isMovingStart,
-    setOldStartNode,
-    setOldEndNode,
-    oldStartNode,
-    oldEndNode,
-    isMovingEnd,
-  ]);
+  }, [gridState, cellGrid]);
 
   return (
     <>
       <Navigation cellGrid={cellGrid} setCellGrid={setCellGrid} />
-      {/* <PathGrid cellGrid={cellGrid} setCellGrid={setCellGrid} /> */}
-      <TableContainer
-        onMouseDown={() => setIsMouseDown(true)}
-        onMouseUp={() => {
-          setIsMouseDown(false);
-        }}
-      >
+      <TableContainer>
         <Table>
           <Tbody>
             {cellGrid.map((row, row_ind) => {
               return (
-                <Tr h={CellSizePixels}>
+                <Tr h={CellSizePixels} key={row_ind}>
                   {row.map((cell, col_ind) => {
-                    return <Cell col={col_ind} row={row_ind} cell={cell} />;
+                    return (
+                      <Cell
+                        key={`${row_ind}_${col_ind}`}
+                        col={col_ind}
+                        row={row_ind}
+                        cell={cell}
+                      />
+                    );
                   })}
                 </Tr>
               );

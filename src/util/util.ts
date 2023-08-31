@@ -60,3 +60,73 @@ export const getNewGrid = (
   newGrid[row][col] = newNode;
   return newGrid;
 };
+
+export const removeDuplicateBasedOnFinalCell = (
+  finalRow: number,
+  finalCol: number,
+  type: "start" | "finish",
+  cellGrid: GraphNode[][]
+): GraphNode[][] => {
+  let node: GraphNode | null = null;
+  let nodeDist: number = Infinity;
+
+  const distance = (x1: number, y1: number, x2: number, y2: number) =>
+    Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+
+  for (let i = 0; i < cellGrid.length; i++) {
+    for (let j = 0; j < cellGrid[0].length; j++) {
+      const curNode = cellGrid[i][j];
+
+      if (type == "start") {
+        if (curNode.isStart) {
+          const dist = distance(finalRow, i, finalCol, j);
+          if (node == null) {
+            node = curNode;
+            nodeDist = dist;
+          } else {
+            if (dist < nodeDist) {
+              node = curNode;
+              nodeDist = dist;
+            }
+          }
+        }
+      } else if (type == "finish") {
+        if (curNode.isFinish) {
+          const dist = distance(finalRow, i, finalCol, j);
+          if (node == null) {
+            node = curNode;
+            nodeDist = dist;
+          } else {
+            if (dist < nodeDist) {
+              node = curNode;
+              nodeDist = dist;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  if (!node) return cellGrid;
+
+  const copy = [...cellGrid];
+  for (let i = 0; i < copy.length; i++) {
+    for (let j = 0; j < copy[0].length; j++) {
+      if (type == "start") {
+        const curnode = copy[i][j];
+        if (curnode.isStart && (i != node.row || j != node.col)) {
+          curnode.isStart = false;
+          copy[i][j] = curnode;
+        }
+      } else {
+        const curnode = copy[i][j];
+        if (curnode.isFinish && (i != node.row || j != node.col)) {
+          curnode.isFinish = false;
+          copy[i][j] = curnode;
+        }
+      }
+    }
+  }
+
+  return copy;
+};

@@ -36,7 +36,7 @@ const Navigation: React.FC<NavigationProps> = ({ cellGrid, setCellGrid }) => {
             })}
           </Select>
           <Button px={4} colorScheme="red" onClick={resetGrid}>
-            Clear Board
+            Reset Board
           </Button>
           <HStack gap={4}>
             <Box
