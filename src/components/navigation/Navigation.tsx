@@ -1,18 +1,17 @@
-import { Box, Button, HStack, Heading, Select, Text } from "@chakra-ui/react";
+import { Box, Button, HStack, Heading, Select } from "@chakra-ui/react";
 import {
     ANIMATION_SPEED,
     Algorithms,
-    CellSizePixels,
     createGrid,
     getFinishNode,
     getStartingNode,
     unVisitAllNodes,
 } from "../../util/util";
 import { GraphAlgorithmResult, GraphNode } from "../../types";
-import { Colors } from "../../util/colors";
 import { bfs } from "../../algorithms/bfs";
 import { useCallback, useState } from "react";
 import { dfs } from "../../algorithms/dfs";
+import Legend from "../legend/Legend";
 
 interface NavigationProps {
     cellGrid: GraphNode[][];
@@ -158,61 +157,7 @@ const Navigation: React.FC<NavigationProps> = ({ cellGrid, setCellGrid }) => {
                     <Button px={4} colorScheme="red" onClick={resetGrid}>
                         Reset Board
                     </Button>
-                    <HStack gap={4}>
-                        <Box
-                            minW={CellSizePixels}
-                            minH={CellSizePixels}
-                            bgColor={Colors.StartingNode}
-                            _hover={{ bgColor: Colors.StartingNodeHover }}
-                        ></Box>
-                        <Text>Starting Node</Text>
-                    </HStack>
-                    <HStack gap={4}>
-                        <Box
-                            minW={CellSizePixels}
-                            minH={CellSizePixels}
-                            bgColor={Colors.EndingNode}
-                            _hover={{ bgColor: Colors.EndingNodeHover }}
-                        ></Box>
-                        <Text>Ending Node</Text>
-                    </HStack>
-                    <HStack gap={4}>
-                        <Box
-                            minW={CellSizePixels}
-                            minH={CellSizePixels}
-                            bgColor={Colors.WallNode}
-                            _hover={{ bgColor: Colors.WallNodeHover }}
-                        ></Box>
-                        <Text>Wall Node</Text>
-                    </HStack>
-                    <HStack gap={4}>
-                        <Box
-                            minW={CellSizePixels}
-                            minH={CellSizePixels}
-                            bgColor={Colors.EmptyNode}
-                            border={"1px solid"}
-                            _hover={{ bgColor: Colors.EmptyNodeHover }}
-                        ></Box>
-                        <Text>Empty Node</Text>
-                    </HStack>
-                    <HStack gap={4}>
-                        <Box
-                            minW={CellSizePixels}
-                            minH={CellSizePixels}
-                            bgColor={Colors.VisitedNode}
-                            _hover={{ bgColor: Colors.VisitedNodeHover }}
-                        ></Box>
-                        <Text>Visited Node</Text>
-                    </HStack>
-                    <HStack gap={4}>
-                        <Box
-                            minW={CellSizePixels}
-                            minH={CellSizePixels}
-                            bgColor={Colors.ShortestPathNode}
-                            _hover={{ bgColor: Colors.ShortestPathHoverNode }}
-                        ></Box>
-                        <Text>Shortest Path Node</Text>
-                    </HStack>
+                    <Legend />
                 </HStack>
 
                 <HStack>
