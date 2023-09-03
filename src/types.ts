@@ -14,3 +14,9 @@ export type GraphAlgorithmResult = {
     visitedNodes: GraphNode[];
     shortestPath?: GraphNode[];
 };
+
+export type GraphAlgorithmArgs = {
+    cellGrid: GraphNode[][];
+    startNode: GraphNode;
+    endNode: GraphNode;
+};

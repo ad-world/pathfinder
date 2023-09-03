@@ -1,34 +1,20 @@
-import { GraphAlgorithmResult, GraphNode } from "../types";
+import { GraphAlgorithmArgs, GraphAlgorithmResult, GraphNode } from "../types";
 import { Queue } from "../util/queue";
+import { inBounds } from "../util/util";
 
-export const bfs = (
-    cellGrid: GraphNode[][],
-    startNode: GraphNode,
-    endNode: GraphNode
-): GraphAlgorithmResult => {
+export const bfs = (args: GraphAlgorithmArgs): GraphAlgorithmResult => {
+    const { cellGrid, startNode, endNode } = args;
     const q = new Queue<GraphNode>();
     const visitedNodes: GraphNode[] = [];
 
     const dirs = [
         [0, 1],
-        [0, -1],
         [1, 0],
         [-1, 0],
+        [0, -1],
     ];
 
     const copy = [...cellGrid];
-
-    const inBounds = (
-        row: number,
-        col: number,
-        cellGrid: GraphNode[][]
-    ): boolean => {
-        const m = cellGrid.length;
-        const n = cellGrid[0].length;
-
-        if (row >= 0 && row < m && col >= 0 && col < n) return true;
-        return false;
-    };
 
     startNode.isVisited = true;
     q.enqueue(startNode);

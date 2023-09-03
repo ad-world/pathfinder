@@ -5,6 +5,8 @@ export const START_NODE_COL = 10;
 export const FINISH_NODE_ROW = 10;
 export const FINISH_NODE_COL = 30;
 
+export const ANIMATION_SPEED = 10;
+
 export const CellSizeNumber = 35;
 export const CellSizePixels = "35px";
 
@@ -151,6 +153,17 @@ export const unVisitAllNodes = (cellGrid: GraphNode[][]): GraphNode[][] => {
         }
     }
 
-    console.log(copy);
     return copy;
+};
+
+export const inBounds = (
+    row: number,
+    col: number,
+    cellGrid: GraphNode[][]
+): boolean => {
+    const m = cellGrid.length;
+    const n = cellGrid[0].length;
+
+    if (row >= 0 && row < m && col >= 0 && col < n) return true;
+    return false;
 };
