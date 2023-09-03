@@ -10,6 +10,11 @@ export const ANIMATION_SPEED = 10;
 export const CellSizeNumber = 35;
 export const CellSizePixels = "35px";
 
+export enum Algorithms {
+    BFS = "Breadth First Search (BFS)",
+    DFS = "Depth First Search (DFS)",
+}
+
 export function calculateGridDimensions(
     screenWidth: number,
     screenHeight: number,

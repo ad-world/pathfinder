@@ -1,6 +1,7 @@
 import { Box, Button, HStack, Heading, Select, Text } from "@chakra-ui/react";
 import {
     ANIMATION_SPEED,
+    Algorithms,
     CellSizePixels,
     createGrid,
     getFinishNode,
@@ -13,10 +14,7 @@ import { bfs } from "../../algorithms/bfs";
 import { useCallback, useState } from "react";
 import { dfs } from "../../algorithms/dfs";
 
-enum Algorithms {
-    BFS = "Breadth First Search (BFS)",
-    DFS = "Depth First Search (DFS)",
-}
+
 
 interface NavigationProps {
     cellGrid: GraphNode[][];
