@@ -31,7 +31,11 @@ export const dfs = (args: GraphAlgorithmArgs): GraphAlgorithmResult => {
 
             if (inBounds(newRow, newCol, copy)) {
                 const newNode = copy[newRow][newCol];
-                if (!newNode.isVisited && shouldKeepSearching) {
+                if (
+                    !newNode.isVisited &&
+                    shouldKeepSearching &&
+                    !newNode.isWall
+                ) {
                     search(newNode, visited);
                 }
             }

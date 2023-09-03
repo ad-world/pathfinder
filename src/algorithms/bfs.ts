@@ -34,7 +34,7 @@ export const bfs = (args: GraphAlgorithmArgs): GraphAlgorithmResult => {
 
             if (inBounds(newRow, newCol, copy)) {
                 const newNode = copy[newRow][newCol];
-                if (!newNode.isVisited) {
+                if (!newNode.isVisited && !newNode.isWall) {
                     newNode.isVisited = true;
                     q.enqueue(newNode);
                 }
