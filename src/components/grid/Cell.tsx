@@ -13,6 +13,7 @@ const Cell: React.FC<CellProps> = ({ cell, row, col }) => {
     const getBgColor = (cell: GraphNode) => {
         if (cell.isStart) return Colors.StartingNode;
         if (cell.isFinish) return Colors.EndingNode;
+        if (cell.isInShortestPath) return Colors.ShortestPathNode;
         if (cell.isVisited) return Colors.VisitedNode;
         if (cell.isWall) return Colors.WallNode;
         return Colors.EmptyNode;
@@ -21,6 +22,7 @@ const Cell: React.FC<CellProps> = ({ cell, row, col }) => {
     const getBgHover = (cell: GraphNode) => {
         if (cell.isStart) return Colors.StartingNodeHover;
         if (cell.isFinish) return Colors.EndingNodeHover;
+        if (cell.isInShortestPath) return Colors.ShortestPathHoverNode;
         if (cell.isVisited) return Colors.VisitedNodeHover;
         if (cell.isWall) return Colors.WallNodeHover;
         return Colors.EmptyNodeHover;

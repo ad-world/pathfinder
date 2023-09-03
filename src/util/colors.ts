@@ -9,4 +9,6 @@ export enum Colors {
     VisitedNodeHover = "blue.300",
     EmptyNode = "white",
     EmptyNodeHover = "gray.200",
+    ShortestPathNode = "purple.500",
+    ShortestPathHoverNode = "purple.200",
 }

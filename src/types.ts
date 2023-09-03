@@ -7,12 +7,13 @@ export type GraphNode = {
     isVisited: boolean;
     isWall: boolean;
     previousNode: GraphNode | null;
+    isInShortestPath: boolean;
 };
 
 export type GraphAlgorithmResult = {
     cellGrid: GraphNode[][];
     visitedNodes: GraphNode[];
-    shortestPath?: GraphNode[];
+    shortestPath: GraphNode[];
 };
 
 export type GraphAlgorithmArgs = {

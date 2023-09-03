@@ -14,14 +14,13 @@ import { bfs } from "../../algorithms/bfs";
 import { useCallback, useState } from "react";
 import { dfs } from "../../algorithms/dfs";
 
-
-
 interface NavigationProps {
     cellGrid: GraphNode[][];
     setCellGrid: React.Dispatch<React.SetStateAction<GraphNode[][]>>;
 }
 
 let pathAnimationTimer: ReturnType<typeof setTimeout>;
+let shortestPathAnimationTimer: ReturnType<typeof setTimeout>;
 
 const Navigation: React.FC<NavigationProps> = ({ cellGrid, setCellGrid }) => {
     const rows = cellGrid.length;
@@ -30,20 +29,57 @@ const Navigation: React.FC<NavigationProps> = ({ cellGrid, setCellGrid }) => {
 
     const resetGrid = () => {
         clearTimeout(pathAnimationTimer);
+        clearTimeout(shortestPathAnimationTimer);
         setCellGrid(createGrid(rows, columns));
     };
 
     const handleSearch = useCallback(() => {
         clearTimeout(pathAnimationTimer);
-        const pathAnimation = (
-            visitedNodes: GraphNode[],
+        clearTimeout(shortestPathAnimationTimer);
+
+        const shortestPathAnimation = (
+            pathNodes: GraphNode[],
             currentIndex: number,
             currentGrid: GraphNode[][],
             gridSetter: (arg: GraphNode[][]) => void
         ) => {
+            if (currentIndex >= pathNodes.length) {
+                return;
+            } else {
+                const curNode = pathNodes[currentIndex];
+                curNode.isInShortestPath = true;
+
+                const copy = [...currentGrid];
+                copy[curNode.row][curNode.col] = curNode;
+                gridSetter(copy);
+
+                shortestPathAnimationTimer = setTimeout(
+                    shortestPathAnimation,
+                    ANIMATION_SPEED,
+                    pathNodes,
+                    ++currentIndex,
+                    currentGrid,
+                    gridSetter
+                );
+            }
+        };
+
+        const pathAnimation = (
+            visitedNodes: GraphNode[],
+            currentIndex: number,
+            currentGrid: GraphNode[][],
+            gridSetter: (arg: GraphNode[][]) => void,
+            shortestPath: GraphNode[]
+        ) => {
             if (currentIndex >= visitedNodes.length) {
-                pathAnimationTimer;
-                // shortest path animation
+                if (shortestPath && shortestPath.length) {
+                    shortestPathAnimation(
+                        shortestPath,
+                        0,
+                        currentGrid,
+                        gridSetter
+                    );
+                }
             } else {
                 const curNode = visitedNodes[currentIndex];
                 curNode.isVisited = true;
@@ -58,16 +94,17 @@ const Navigation: React.FC<NavigationProps> = ({ cellGrid, setCellGrid }) => {
                     visitedNodes,
                     ++currentIndex,
                     currentGrid,
-                    gridSetter
+                    gridSetter,
+                    shortestPath
                 );
             }
         };
 
         const animateAlgorithm = (result: GraphAlgorithmResult) => {
-            const { cellGrid: newGrid, visitedNodes } = result;
+            const { cellGrid: newGrid, visitedNodes, shortestPath } = result;
             const copy = unVisitAllNodes(newGrid);
 
-            pathAnimation(visitedNodes, 0, copy, setCellGrid);
+            pathAnimation(visitedNodes, 0, copy, setCellGrid, shortestPath);
         };
 
         setCellGrid(unVisitAllNodes(cellGrid));
@@ -166,6 +203,15 @@ const Navigation: React.FC<NavigationProps> = ({ cellGrid, setCellGrid }) => {
                             _hover={{ bgColor: Colors.VisitedNodeHover }}
                         ></Box>
                         <Text>Visited Node</Text>
+                    </HStack>
+                    <HStack gap={4}>
+                        <Box
+                            minW={CellSizePixels}
+                            minH={CellSizePixels}
+                            bgColor={Colors.ShortestPathNode}
+                            _hover={{ bgColor: Colors.ShortestPathHoverNode }}
+                        ></Box>
+                        <Text>Shortest Path Node</Text>
                     </HStack>
                 </HStack>
 

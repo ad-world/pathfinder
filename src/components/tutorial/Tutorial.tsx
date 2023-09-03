@@ -116,7 +116,8 @@ const Tutorial: React.FC<TutorialProps> = ({ isOpen, onClose }) => {
                 <Text>
                     Click 'Search' in the top right and watch the magic happen.
                     Blue nodes are nodes that the algorithm has marked as
-                    'visited'
+                    'visited'. Purple nodes are nodes that are part of the
+                    shortest path.
                 </Text>
                 <HStack gap={4} my={4}>
                     <Box
@@ -126,6 +127,15 @@ const Tutorial: React.FC<TutorialProps> = ({ isOpen, onClose }) => {
                         _hover={{ bgColor: Colors.VisitedNodeHover }}
                     ></Box>
                     <Text>Visited Node</Text>
+                </HStack>
+                <HStack gap={4} my={4}>
+                    <Box
+                        minW={CellSizePixels}
+                        minH={CellSizePixels}
+                        bgColor={Colors.ShortestPathNode}
+                        _hover={{ bgColor: Colors.ShortestPathHoverNode }}
+                    ></Box>
+                    <Text>Shortest Path Node</Text>
                 </HStack>
             </>
         ),

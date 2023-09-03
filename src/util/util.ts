@@ -48,6 +48,7 @@ export const createNode = (row: number, col: number): GraphNode => {
         distance: Infinity,
         isVisited: false,
         isWall: false,
+        isInShortestPath: false,
         previousNode: null,
     };
 };
@@ -155,6 +156,7 @@ export const unVisitAllNodes = (cellGrid: GraphNode[][]): GraphNode[][] => {
     for (const row of copy) {
         for (let i = 0; i < row.length; i++) {
             row[i].isVisited = false;
+            row[i].isInShortestPath = false;
         }
     }
 
