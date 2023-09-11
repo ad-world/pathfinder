@@ -6,6 +6,7 @@ export type GraphNode = {
     distance: number;
     isVisited: boolean;
     isWall: boolean;
+    weight: number;
     previousNode: GraphNode | null;
     isInShortestPath: boolean;
 };
@@ -21,3 +22,8 @@ export type GraphAlgorithmArgs = {
     startNode: GraphNode;
     endNode: GraphNode;
 };
+
+
+export type DistancePathMap = {
+    [x: string]: { distance: number; path: GraphNode[] };
+}

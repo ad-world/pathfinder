@@ -12,6 +12,7 @@ import { bfs } from "../../algorithms/bfs";
 import { useCallback, useState } from "react";
 import { dfs } from "../../algorithms/dfs";
 import Legend from "../legend/Legend";
+import { dijkstra } from "../../algorithms/dijkstra";
 
 interface NavigationProps {
     cellGrid: GraphNode[][];
@@ -103,6 +104,7 @@ const Navigation: React.FC<NavigationProps> = ({ cellGrid, setCellGrid }) => {
             const { cellGrid: newGrid, visitedNodes, shortestPath } = result;
             const copy = unVisitAllNodes(newGrid);
 
+
             pathAnimation(visitedNodes, 0, copy, setCellGrid, shortestPath);
         };
 
@@ -123,6 +125,12 @@ const Navigation: React.FC<NavigationProps> = ({ cellGrid, setCellGrid }) => {
                     startNode: getStartingNode(cellGrid),
                     endNode: getFinishNode(cellGrid),
                 });
+            } else if (algorithm == Algorithms.DIJKSTRA) {
+                result = dijkstra({
+                    cellGrid,
+                    startNode: getStartingNode(cellGrid),
+                    endNode: getFinishNode(cellGrid)
+                })
             }
 
             if (result) animateAlgorithm(result);

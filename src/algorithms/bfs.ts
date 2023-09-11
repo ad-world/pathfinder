@@ -1,6 +1,6 @@
-import { GraphAlgorithmArgs, GraphAlgorithmResult, GraphNode } from "../types";
+import { DistancePathMap, GraphAlgorithmArgs, GraphAlgorithmResult, GraphNode } from "../types";
 import { Queue } from "../util/queue";
-import { inBounds, unVisitAllNodes } from "../util/util";
+import { cellString, inBounds, unVisitAllNodes } from "../util/util";
 
 export const bfs = (args: GraphAlgorithmArgs): GraphAlgorithmResult => {
     const { cellGrid, startNode, endNode } = args;
@@ -16,12 +16,10 @@ export const bfs = (args: GraphAlgorithmArgs): GraphAlgorithmResult => {
 
     const copy = [...unVisitAllNodes(cellGrid)];
 
-    const distancePathMap: {
-        [x: string]: { distance: number; path: GraphNode[] };
-    } = {};
+    const distancePathMap: DistancePathMap = {};
     startNode.isVisited = true;
     q.enqueue(startNode);
-    distancePathMap[`${startNode.row}${startNode.col}`] = {
+    distancePathMap[cellString(startNode.row, startNode.col)] = {
         distance: 0,
         path: [],
     };
@@ -44,9 +42,9 @@ export const bfs = (args: GraphAlgorithmArgs): GraphAlgorithmResult => {
                 const newNode = copy[newRow][newCol];
                 if (!newNode.isVisited && !newNode.isWall) {
                     const oldNodeMetadata =
-                        distancePathMap[`${top.row}${top.col}`];
+                        distancePathMap[cellString(top.row, top.col)];
                     newNode.isVisited = true;
-                    distancePathMap[`${newNode.row}${newNode.col}`] = {
+                    distancePathMap[cellString(newNode.row, newNode.col)] = {
                         distance: oldNodeMetadata.distance + 1,
                         path: [...oldNodeMetadata.path, top],
                     };
@@ -56,7 +54,8 @@ export const bfs = (args: GraphAlgorithmArgs): GraphAlgorithmResult => {
         }
     }
 
-    const result = distancePathMap[`${endNode.row}${endNode.col}`];
+    const result = distancePathMap[cellString(endNode.row, endNode.col)];
+
     return {
         cellGrid: copy,
         visitedNodes,

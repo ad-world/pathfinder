@@ -13,6 +13,7 @@ export const CellSizePixels = "35px";
 export enum Algorithms {
     BFS = "Breadth First Search (BFS)",
     DFS = "Depth First Search (DFS)",
+    DIJKSTRA = "Dijkstra's Algorithm"
 }
 
 export function calculateGridDimensions(
@@ -48,6 +49,7 @@ export const createNode = (row: number, col: number): GraphNode => {
         distance: Infinity,
         isVisited: false,
         isWall: false,
+        weight: 1,
         isInShortestPath: false,
         previousNode: null,
     };
@@ -174,3 +176,5 @@ export const inBounds = (
     if (row >= 0 && row < m && col >= 0 && col < n) return true;
     return false;
 };
+
+export const cellString = (row: number, col: number) => `${row}-${col}`;

@@ -106,7 +106,7 @@ const Tutorial: React.FC<TutorialProps> = ({ isOpen, onClose }) => {
                 </Text>
                 <UnorderedList>
                     {Object.values(Algorithms).map((item) => (
-                        <ListItem>{item}</ListItem>
+                        <ListItem key={item}>{item}</ListItem>
                     ))}
                 </UnorderedList>
             </>

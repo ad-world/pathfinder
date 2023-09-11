@@ -1,5 +1,5 @@
-import { GraphAlgorithmArgs, GraphAlgorithmResult, GraphNode } from "../types";
-import { inBounds } from "../util/util";
+import { DistancePathMap, GraphAlgorithmArgs, GraphAlgorithmResult, GraphNode } from "../types";
+import { cellString, inBounds } from "../util/util";
 
 export const dfs = (args: GraphAlgorithmArgs): GraphAlgorithmResult => {
     const { cellGrid, startNode, endNode } = args;
@@ -16,9 +16,7 @@ export const dfs = (args: GraphAlgorithmArgs): GraphAlgorithmResult => {
 
     const copy = [...cellGrid];
 
-    const distancePathMap: {
-        [x: string]: { distance: number; path: GraphNode[] };
-    } = {};
+    const distancePathMap: DistancePathMap = {};
 
     const search = (node: GraphNode, visited: GraphNode[]) => {
         node.isVisited = true;
@@ -41,8 +39,8 @@ export const dfs = (args: GraphAlgorithmArgs): GraphAlgorithmResult => {
                     !newNode.isWall
                 ) {
                     const oldNodeMetadata =
-                        distancePathMap[`${node.row}${node.col}`];
-                    distancePathMap[`${newNode.row}${newNode.col}`] = {
+                        distancePathMap[cellString(node.row, node.col)];
+                    distancePathMap[cellString(newNode.row, newNode.col)] = {
                         distance: oldNodeMetadata.distance + 1,
                         path: [...oldNodeMetadata.path, node],
                     };
@@ -52,14 +50,14 @@ export const dfs = (args: GraphAlgorithmArgs): GraphAlgorithmResult => {
         }
     };
 
-    distancePathMap[`${startNode.row}${startNode.col}`] = {
+    distancePathMap[cellString(startNode.row, startNode.col)] = {
         distance: 0,
         path: [],
     };
 
     search(startNode, visitedNodes);
 
-    const result = distancePathMap[`${endNode.row}${endNode.col}`];
+    const result = distancePathMap[cellString(endNode.row, endNode.col)];
 
     return {
         cellGrid: copy,

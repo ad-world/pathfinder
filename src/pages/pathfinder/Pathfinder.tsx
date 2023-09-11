@@ -63,6 +63,7 @@ const Pathfinder = () => {
           } else {
             const copy = [...cellGrid];
             copy[row][col].isWall = !copy[row][col].isWall;
+
             setGridState({
               ...gridState,
               oldWallNode: copy[row][col],
