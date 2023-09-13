@@ -1,13 +1,14 @@
-import { Box, Button, HStack, Heading, Select } from "@chakra-ui/react";
+import { Box, Button, Checkbox, HStack, Heading, Menu, MenuButton, MenuItem, MenuList, Select, Text } from "@chakra-ui/react";
 import {
     ANIMATION_SPEED,
     Algorithms,
     createGrid,
     getFinishNode,
     getStartingNode,
+    getWeightedNodes,
     unVisitAllNodes,
 } from "../../util/util";
-import { GraphAlgorithmResult, GraphNode } from "../../types";
+import { GraphAlgorithmResult, GraphNode, WeightedNode } from "../../types";
 import { bfs } from "../../algorithms/bfs";
 import { useCallback, useState } from "react";
 import { dfs } from "../../algorithms/dfs";
@@ -17,15 +18,21 @@ import { dijkstra } from "../../algorithms/dijkstra";
 interface NavigationProps {
     cellGrid: GraphNode[][];
     setCellGrid: React.Dispatch<React.SetStateAction<GraphNode[][]>>;
+    currentWeight: WeightedNode;
+    setCurrentWeight: React.Dispatch<React.SetStateAction<WeightedNode>>;
+    isDrawingWall: boolean,
+    setIsDrawingWall: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 let pathAnimationTimer: ReturnType<typeof setTimeout>;
 let shortestPathAnimationTimer: ReturnType<typeof setTimeout>;
 
-const Navigation: React.FC<NavigationProps> = ({ cellGrid, setCellGrid }) => {
+const Navigation: React.FC<NavigationProps> = ({ cellGrid, setCellGrid, currentWeight, setCurrentWeight, isDrawingWall, setIsDrawingWall }) => {
     const rows = cellGrid.length;
     const columns = cellGrid[0].length;
     const [algorithm, setAlgorithm] = useState<Algorithms | null>(null);
+
+    const weightedNodes = getWeightedNodes();
 
     const resetGrid = () => {
         clearTimeout(pathAnimationTimer);
@@ -166,6 +173,37 @@ const Navigation: React.FC<NavigationProps> = ({ cellGrid, setCellGrid }) => {
                         Reset Board
                     </Button>
                     <Legend />
+                    <Menu>
+                        <MenuButton as={Button} border={'1px solid'}>
+                            <HStack>
+                                <Text>{currentWeight?.title}</Text>
+                                <Box
+                                    minW={"15px"}
+                                    minH={"15px"}
+                                    bgColor={currentWeight?.color}
+                                ></Box>
+                            </HStack>
+                        </MenuButton>
+                        <MenuList>
+                            {weightedNodes.map(item => {
+                                return (
+                                    <MenuItem onClick={() => setCurrentWeight(item)}>
+                                        <HStack>
+                                            <Text>{item.title}</Text>
+                                            <Box
+                                                minW={"15px"}
+                                                minH={"15px"}
+                                                bgColor={item.color}
+                                            ></Box>
+                                        </HStack>
+                                    </MenuItem>
+                                )
+                            })}
+                        </MenuList>
+                    </Menu>
+                    <Checkbox size='lg' isChecked={isDrawingWall} onChange={e => setIsDrawingWall(e.target.checked)} colorScheme='blackAlpha'>
+                        Draw wall instead?
+                    </Checkbox>
                 </HStack>
 
                 <HStack>

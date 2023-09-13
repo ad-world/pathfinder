@@ -3,11 +3,12 @@ import Navigation from "../../components/navigation/Navigation";
 import {
   CellSizePixels,
   createGrid,
+  getWeightedNodes,
   removeDuplicateBasedOnFinalCell,
 } from "../../util/util";
 import { Table, TableContainer, Tbody, Tr } from "@chakra-ui/react";
 import Cell from "../../components/grid/Cell";
-import { GraphNode } from "../../types";
+import { GraphNode, WeightedNode } from "../../types";
 
 interface GridState {
   isMouseDown: boolean;
@@ -23,6 +24,9 @@ const Pathfinder = () => {
   const columns = 40;
 
   const [cellGrid, setCellGrid] = useState(createGrid(rows, columns));
+  const [currentWeight, setCurrentWeight] = useState<WeightedNode>(getWeightedNodes()[0]);
+  const [isDrawingWall, setIsDrawingWall] = useState<boolean>(true);
+
   const [gridState, setGridState] = useState<GridState>({
     isMouseDown: false,
     isMovingEnd: false,
@@ -62,7 +66,13 @@ const Pathfinder = () => {
             });
           } else {
             const copy = [...cellGrid];
-            copy[row][col].isWall = !copy[row][col].isWall;
+
+            if(isDrawingWall) {
+              copy[row][col].isWall = !copy[row][col].isWall;
+            } else {
+              copy[row][col].weight = currentWeight.weight;
+
+            }
 
             setGridState({
               ...gridState,
@@ -85,7 +95,11 @@ const Pathfinder = () => {
           const col = Number(pos[1]);
 
           if (!gridState.isMovingStart && !gridState.isMovingEnd) {
-            copy[row][col].isWall = true;
+            if(isDrawingWall) {
+              copy[row][col].isWall = true;
+            } else {
+              copy[row][col].weight = currentWeight.weight
+            }
           } else if (gridState.isMovingStart) {
             if (gridState.oldStartNode) {
               copy[gridState.oldStartNode.row][
@@ -165,11 +179,18 @@ const Pathfinder = () => {
         oldWallNode: null,
       });
     };
-  }, [gridState, cellGrid]);
+  }, [gridState, cellGrid, isDrawingWall, currentWeight.weight]);
 
   return (
     <>
-      <Navigation cellGrid={cellGrid} setCellGrid={setCellGrid} />
+      <Navigation
+        cellGrid={cellGrid}
+        setCellGrid={setCellGrid}
+        currentWeight={currentWeight}
+        setCurrentWeight={setCurrentWeight}
+        isDrawingWall={isDrawingWall}
+        setIsDrawingWall={setIsDrawingWall}
+      />
       <TableContainer>
         <Table>
           <Tbody>

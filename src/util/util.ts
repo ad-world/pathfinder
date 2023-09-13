@@ -1,4 +1,4 @@
-import { GraphNode } from "../types";
+import { GraphNode, WeightedNode } from "../types";
 
 export const START_NODE_ROW = 10;
 export const START_NODE_COL = 10;
@@ -178,3 +178,23 @@ export const inBounds = (
 };
 
 export const cellString = (row: number, col: number) => `${row}-${col}`;
+
+export const getWeightedNodes = (): WeightedNode[] => {
+    return [
+        {
+            title: "Light",
+            weight: 2,
+            color: "blue.100"
+        },
+        {
+            title: "Medium",
+            weight: 6,
+            color: "blue.200"
+        },
+        {
+            title: "Heavy",
+            weight: 10, 
+            color: "blue.300"
+        }
+    ]
+}

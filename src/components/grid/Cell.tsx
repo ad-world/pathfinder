@@ -1,13 +1,15 @@
 import { Td } from "@chakra-ui/react";
 import { GraphNode } from "../../types";
 import { Colors } from "../../util/colors";
-import { CellSizePixels } from "../../util/util";
+import { CellSizePixels, getWeightedNodes } from "../../util/util";
 
 interface CellProps {
     cell: GraphNode;
     row: number;
     col: number;
 }
+
+const nodes = getWeightedNodes();
 
 const Cell: React.FC<CellProps> = ({ cell, row, col }) => {
     const getBgColor = (cell: GraphNode) => {
@@ -16,6 +18,7 @@ const Cell: React.FC<CellProps> = ({ cell, row, col }) => {
         if (cell.isInShortestPath) return Colors.ShortestPathNode;
         if (cell.isVisited) return Colors.VisitedNode;
         if (cell.isWall) return Colors.WallNode;
+        if (cell.weight) return nodes.find(item => item.weight == cell.weight)?.color ?? Colors.EmptyNode
         return Colors.EmptyNode;
     };
 

@@ -25,7 +25,8 @@ function App() {
 
     useEffect(() => {
         onOpen();
-    }, []);
+    }, [onOpen]);
+
     return (
         <Container minW="100vw" padding={0} margin={0} h="100vh">
             <Tutorial isOpen={tutIsOpen} onClose={tutOnClose} />
