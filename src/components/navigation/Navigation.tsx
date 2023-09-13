@@ -6,7 +6,9 @@ import {
     getFinishNode,
     getStartingNode,
     getWeightedNodes,
+    removeWeights,
     unVisitAllNodes,
+    unsetWalls,
 } from "../../util/util";
 import { GraphAlgorithmResult, GraphNode, WeightedNode } from "../../types";
 import { bfs } from "../../algorithms/bfs";
@@ -14,6 +16,7 @@ import { useCallback, useState } from "react";
 import { dfs } from "../../algorithms/dfs";
 import Legend from "../legend/Legend";
 import { dijkstra } from "../../algorithms/dijkstra";
+import { ChevronDownIcon } from "@chakra-ui/icons";
 
 interface NavigationProps {
     cellGrid: GraphNode[][];
@@ -39,6 +42,18 @@ const Navigation: React.FC<NavigationProps> = ({ cellGrid, setCellGrid, currentW
         clearTimeout(shortestPathAnimationTimer);
         setCellGrid(createGrid(rows, columns));
     };
+
+    const unvisitNodes = () => {
+        setCellGrid(unVisitAllNodes(cellGrid));
+    }
+
+    const removeWalls = () => {
+        setCellGrid(unsetWalls(cellGrid));
+    }
+
+    const removeWeightedNodes = () => {
+        setCellGrid(removeWeights(cellGrid));
+    }
 
     const handleSearch = useCallback(() => {
         clearTimeout(pathAnimationTimer);
@@ -169,9 +184,17 @@ const Navigation: React.FC<NavigationProps> = ({ cellGrid, setCellGrid, currentW
                             );
                         })}
                     </Select>
-                    <Button px={4} colorScheme="red" onClick={resetGrid}>
-                        Reset Board
-                    </Button>
+                    <Menu>
+                        <MenuButton as={Button} px={4} colorScheme="red">
+                            Actions <ChevronDownIcon/>
+                        </MenuButton>
+                        <MenuList>
+                            <MenuItem onClick={resetGrid}>Reset Board</MenuItem>
+                            <MenuItem onClick={unvisitNodes}>Unvisit Nodes</MenuItem>
+                            <MenuItem onClick={removeWalls}>Remove Walls</MenuItem>
+                            <MenuItem onClick={removeWeightedNodes}>Remove Weighted Nodes</MenuItem>
+                        </MenuList>
+                    </Menu>
                     <Legend />
                     <Menu>
                         <MenuButton as={Button} border={'1px solid'}>

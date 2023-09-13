@@ -198,3 +198,25 @@ export const getWeightedNodes = (): WeightedNode[] => {
         }
     ]
 }
+
+export const unsetWalls = (grid: GraphNode[][]): GraphNode[][] => {
+    const copy = [...grid];
+    for (const row of copy) {
+        for (let i = 0; i < row.length; i++) {
+            row[i].isWall = false;
+        }
+    }
+
+    return copy;
+}
+
+export const removeWeights = (grid: GraphNode[][]): GraphNode[][] => {
+    const copy = [...grid];
+    for (const row of copy) {
+        for (let i = 0; i < row.length; i++) {
+            row[i].weight = 1;
+        }
+    }
+
+    return copy;
+}
