@@ -33,7 +33,7 @@ export const dijkstra = (args: GraphAlgorithmArgs): GraphAlgorithmResult => {
                 const newRow = dir[0] + node.row;
                 const newCol = dir[1] + node.col;
     
-                if(inBounds(newRow, newCol, cellGrid)) {
+                if(inBounds(newRow, newCol, cellGrid) && !cellGrid[newRow][newCol].isWall) {
                     const newDistance = distance + cellGrid[newRow][newCol].weight;
                     if(newDistance < distancePathMap[cellString(newRow, newCol)].distance) {
                         distancePathMap[cellString(newRow, newCol)] = {
