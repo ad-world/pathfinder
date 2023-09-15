@@ -16,6 +16,19 @@ import { CellSizePixels } from "../../util/util";
 import { Colors } from "../../util/colors";
 
 const Legend = () => {
+    const NodeWrapper = ({bgColor, hover, text}: { bgColor: Colors, hover: Colors, text: string }) => {
+        return (
+            <HStack gap={4}>
+            <Box
+                minW={CellSizePixels}
+                minH={CellSizePixels}
+                bgColor={bgColor}
+                _hover={{ bgColor: hover}}
+            ></Box>
+            <Text>{text}</Text>
+        </HStack>
+        )
+    } 
     return (
         <Popover>
             <PopoverTrigger>
@@ -31,63 +44,15 @@ const Legend = () => {
                         textAlign={"left"}
                         alignItems={"flex-start"}
                     >
-                        <HStack gap={4}>
-                            <Box
-                                minW={CellSizePixels}
-                                minH={CellSizePixels}
-                                bgColor={Colors.StartingNode}
-                                _hover={{ bgColor: Colors.StartingNodeHover }}
-                            ></Box>
-                            <Text>Starting Node</Text>
-                        </HStack>
-                        <HStack gap={4}>
-                            <Box
-                                minW={CellSizePixels}
-                                minH={CellSizePixels}
-                                bgColor={Colors.EndingNode}
-                                _hover={{ bgColor: Colors.EndingNodeHover }}
-                            ></Box>
-                            <Text>Ending Node</Text>
-                        </HStack>
-                        <HStack gap={4}>
-                            <Box
-                                minW={CellSizePixels}
-                                minH={CellSizePixels}
-                                bgColor={Colors.WallNode}
-                                _hover={{ bgColor: Colors.WallNodeHover }}
-                            ></Box>
-                            <Text>Wall Node</Text>
-                        </HStack>
-                        <HStack gap={4}>
-                            <Box
-                                minW={CellSizePixels}
-                                minH={CellSizePixels}
-                                bgColor={Colors.EmptyNode}
-                                border={"1px solid"}
-                                _hover={{ bgColor: Colors.EmptyNodeHover }}
-                            ></Box>
-                            <Text>Empty Node</Text>
-                        </HStack>
-                        <HStack gap={4}>
-                            <Box
-                                minW={CellSizePixels}
-                                minH={CellSizePixels}
-                                bgColor={Colors.VisitedNode}
-                                _hover={{ bgColor: Colors.VisitedNodeHover }}
-                            ></Box>
-                            <Text>Visited Node</Text>
-                        </HStack>
-                        <HStack gap={4}>
-                            <Box
-                                minW={CellSizePixels}
-                                minH={CellSizePixels}
-                                bgColor={Colors.ShortestPathNode}
-                                _hover={{
-                                    bgColor: Colors.ShortestPathHoverNode,
-                                }}
-                            ></Box>
-                            <Text>Shortest Path Node</Text>
-                        </HStack>
+                        <NodeWrapper bgColor={Colors.StartingNode} hover={Colors.StartingNodeHover} text="Starting Node" />
+                        <NodeWrapper bgColor={Colors.EndingNode} hover={Colors.EndingNodeHover} text="Ending Node" />
+                        <NodeWrapper bgColor={Colors.WallNode} hover={Colors.WallNodeHover} text="Wall Node" />
+                        <NodeWrapper bgColor={Colors.EmptyNode} hover={Colors.EmptyNodeHover} text="Empty Node"/>
+                        <NodeWrapper bgColor={Colors.VisitedNode} hover={Colors.VisitedNodeHover} text="Visited Node"/>
+                        <NodeWrapper bgColor={Colors.ShortestPathNode} hover={Colors.ShortestPathHoverNode} text="Shortest Path Node"/>
+                        <NodeWrapper bgColor={Colors.LightWeightNode} hover={Colors.LightWeightNode} text="Light Weight Node"/>
+                        <NodeWrapper bgColor={Colors.MediumWeightNode} hover={Colors.MediumWeightNode} text="Medium Weight Node"/>
+                        <NodeWrapper bgColor={Colors.HeavyWeightNode} hover={Colors.HeavyWeightNode} text="Heavy Weight Node"/>                        
                     </VStack>
                 </PopoverBody>
             </PopoverContent>

@@ -1,4 +1,5 @@
 import { GraphNode, WeightedNode } from "../types";
+import { Colors } from "./colors";
 
 export const START_NODE_ROW = 10;
 export const START_NODE_COL = 10;
@@ -184,17 +185,17 @@ export const getWeightedNodes = (): WeightedNode[] => {
         {
             title: "Light",
             weight: 2,
-            color: "blue.100"
+            color: Colors.LightWeightNode
         },
         {
             title: "Medium",
-            weight: 6,
-            color: "blue.200"
+            weight: 4,
+            color: Colors.MediumWeightNode
         },
         {
             title: "Heavy",
-            weight: 10, 
-            color: "blue.300"
+            weight: 6, 
+            color: Colors.HeavyWeightNode
         }
     ]
 }
