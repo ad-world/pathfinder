@@ -48,9 +48,9 @@ export const a_star_search = (args: GraphAlgorithmArgs): GraphAlgorithmResult =>
                 node.isVisited = true;
             }
 
-            if(node.row == endNode.row && node.col == endNode.col) {
-                break;
-            }
+            // if(node.row == endNode.row && node.col == endNode.col) {
+            //     break;
+            // }
 
             for(const dir of dirs) {
                 const newRow = dir[0] + node.row;
@@ -60,7 +60,7 @@ export const a_star_search = (args: GraphAlgorithmArgs): GraphAlgorithmResult =>
                     const nodeString = cellString(node.row, node.col);
                     const newNodeString = cellString(newRow, newCol);
 
-                    const nextCost = dist + copy[newRow][newCol].weight;
+                    const nextCost = costSoFar[nodeString] + copy[newRow][newCol].weight;
                     if(!costSoFar[newNodeString] || nextCost < costSoFar[newNodeString]) {
                         costSoFar[newNodeString] = nextCost
                         const newPriority = nextCost + heuristic(copy[newRow][newCol], endNode)
