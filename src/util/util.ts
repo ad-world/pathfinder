@@ -14,7 +14,8 @@ export const CellSizePixels = "35px";
 export enum Algorithms {
     BFS = "Breadth First Search (BFS)",
     DFS = "Depth First Search (DFS)",
-    DIJKSTRA = "Dijkstra's Algorithm"
+    DIJKSTRA = "Dijkstra's Algorithm",
+    A_STAR = "A* Search"
 }
 
 export function calculateGridDimensions(

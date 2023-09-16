@@ -1,5 +1,5 @@
 export class PriorityQueue<T> {
-    private data: [number, T][] = []
+    data: [number, T][] = []
 
     constructor() {
         this.data = []

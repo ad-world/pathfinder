@@ -17,6 +17,7 @@ import { dfs } from "../../algorithms/dfs";
 import Legend from "../legend/Legend";
 import { dijkstra } from "../../algorithms/dijkstra";
 import { ChevronDownIcon } from "@chakra-ui/icons";
+import { a_star_search } from "../../algorithms/a-star-search";
 
 interface NavigationProps {
     cellGrid: GraphNode[][];
@@ -149,6 +150,12 @@ const Navigation: React.FC<NavigationProps> = ({ cellGrid, setCellGrid, currentW
                 });
             } else if (algorithm == Algorithms.DIJKSTRA) {
                 result = dijkstra({
+                    cellGrid,
+                    startNode: getStartingNode(cellGrid),
+                    endNode: getFinishNode(cellGrid)
+                })
+            } else if (algorithm == Algorithms.A_STAR) {
+                result = a_star_search({
                     cellGrid,
                     startNode: getStartingNode(cellGrid),
                     endNode: getFinishNode(cellGrid)
