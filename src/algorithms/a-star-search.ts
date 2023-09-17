@@ -1,88 +1,130 @@
-import { DistancePathMap, GraphAlgorithmArgs, GraphAlgorithmResult, GraphNode } from "../types";
+import {
+    GraphAlgorithmArgs,
+    GraphAlgorithmResult,
+    GraphNode,
+} from "../types";
 import { PriorityQueue } from "../util/priority-queue";
-import { cellString, inBounds, unVisitAllNodes } from "../util/util";
+import { getNeighbors } from "../util/util";
 
 const heuristic = (a: GraphNode, b: GraphNode): number => {
-    const {row1, col1} = { row1: a.row, col1: a.col};    
-    const {row2, col2} = { row2: b.row, col2: b.col};
+    const { row1, col1 } = { row1: a.row, col1: a.col };
+    const { row2, col2 } = { row2: b.row, col2: b.col };
 
     return Math.abs(row1 - row2) + Math.abs(col1 - col2);
+};
+
+const heuristic_cost_estimate = (start: GraphNode, current: GraphNode, finish: GraphNode) => {
+    const dx = Math.abs(current.col - finish.col);
+    const dy = Math.abs(current.row - finish.row);
+    const deltaX1 = current.col - finish.col;
+    const deltaY1 = current.row - finish.row;
+    const deltaX2 = start.col - finish.col;
+    const deltaY2 = start.row - finish.row;
+    
+    const cross = Math.abs(deltaX1 * deltaY2 - deltaX2 * deltaY1);
+    let heuristic = dx + dy;
+    heuristic += cross * 0.001;
+
+    return heuristic;
+  }
+
+const setScores = (grid: GraphNode[][]): GraphNode[][] => {
+    for(let i = 0; i < grid.length; i++) {
+        for(let j = 0; j < grid[0].length; j++) {
+            grid[i][j] = {
+                ...grid[i][j],
+                gScore: Infinity,
+                fScore: Infinity,
+                hScore: Infinity,
+            }
+        }
+    }
+
+    return grid;
 }
 
-export const a_star_search = (args: GraphAlgorithmArgs): GraphAlgorithmResult => {
+const reconstructPath = (
+    cameFrom: Map<GraphNode, GraphNode | null>,
+    startNode: GraphNode,
+    endNode: GraphNode
+) => {
+    let current = endNode;
+
+    const path: GraphNode[] = [];
+    if (!cameFrom.get(endNode)) return path;
+
+    while (current != startNode) {
+        path.push(current);
+        current = cameFrom.get(current)!;
+    }
+
+    path.push(startNode);
+    path.reverse();
+
+    return path;
+};
+
+export const a_star_search = (
+    args: GraphAlgorithmArgs
+): GraphAlgorithmResult => {
     const { cellGrid, startNode, endNode } = args;
     const q = new PriorityQueue<GraphNode>();
     const visitedNodes: GraphNode[] = [];
 
-    const dirs = [
-        [0, 1],
-        [1, 0],
-        [-1, 0],
-        [0, -1],
-    ];
+    const copy = setScores(cellGrid);
 
-    const copy = [...unVisitAllNodes(cellGrid)];
-    
-    q.insert(0, startNode);
+    const cameFrom: Map<GraphNode, GraphNode | null> = new Map()
+    const costSoFar: Map<GraphNode, number> = new Map();
+    cameFrom.set(startNode, null);
+    costSoFar.set(startNode, 0);
+   
 
-    const distancePathMap: DistancePathMap = {};
-    const cameFrom: { [x: string]: GraphNode | null} = {};
-    const costSoFar: { [x: string]: number } = {};
-    cameFrom[cellString(startNode.row, startNode.col)] = null;
-    costSoFar[cellString(startNode.row, startNode.col)] = 0;
+    startNode.gScore = 0;
+    startNode.hScore = heuristic(startNode, endNode);
+    startNode.fScore = startNode.hScore;
 
-    distancePathMap[cellString(startNode.row, startNode.col)] = {
-        distance: 0,
-        path: []
-    }
+    q.insert(startNode.fScore, startNode);
 
-    while(!q.isEmpty()) {
+    while (!q.isEmpty()) {
         const top = q.pop();
 
-        if(top !== null) {
-            const node = top?.[1];
-            // const dist = top?.[0];
+        if (top != null) {
+            const node = top[1];
 
-            if(!node.isVisited) {
-                visitedNodes.push(node);
-                node.isVisited = true;
-            }
-
-            // if(node.row == endNode.row && node.col == endNode.col) {
-            //     break;
-            // }
-
-            for(const dir of dirs) {
-                const newRow = dir[0] + node.row;
-                const newCol = dir[1] + node.col;
-
-                if(inBounds(newRow, newCol, cellGrid) && !copy[newRow][newCol].isWall) {
-                    const nodeString = cellString(node.row, node.col);
-                    const newNodeString = cellString(newRow, newCol);
-
-                    const nextCost = costSoFar[nodeString] + copy[newRow][newCol].weight;
-                    if(!costSoFar[newNodeString] || nextCost < costSoFar[newNodeString]) {
-                        costSoFar[newNodeString] = nextCost
-                        const newPriority = nextCost + heuristic(copy[newRow][newCol], endNode)
-                        
-                        distancePathMap[newNodeString] = {
-                            distance: newPriority,
-                            path: [...distancePathMap[nodeString].path, cellGrid[newRow][newCol]]
-                        }
-                        
-                        q.insert(newPriority, cellGrid[newRow][newCol])
-                        cameFrom[newNodeString] = node;
-                    }
-                } 
-            }
-
+            visitedNodes.push(node);
             
+            if (node.row == endNode.row && node.col == endNode.col) {
+                return {
+                    cellGrid,
+                    visitedNodes,
+                    shortestPath: reconstructPath(cameFrom, startNode, node)
+                }
+            }
+
+            node.isVisited = true;
+
+            for(const neighbor of getNeighbors(node, copy)) {
+                if(neighbor.isWall || neighbor.isVisited) {
+                    continue;
+                }
+
+                const score = node.gScore || 0 + neighbor.weight;
+                if(score < neighbor.gScore!) {
+                    neighbor.gScore = score;
+                    neighbor.hScore = heuristic_cost_estimate(startNode, neighbor, endNode);
+                    neighbor.fScore = neighbor.gScore + neighbor.hScore;
+                    cameFrom.set(neighbor, node);
+
+                    if(!q.data.find(item => item[1] === neighbor)) q.insert(neighbor.fScore, neighbor);
+                }
+            }
+
         }
     }
 
     return {
         cellGrid,
         visitedNodes,
-        shortestPath: distancePathMap[cellString(endNode.row, endNode.col)].path
-    }
-}
+        shortestPath: reconstructPath(cameFrom, startNode, endNode),
+    };
+};

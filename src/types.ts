@@ -9,6 +9,10 @@ export type GraphNode = {
     weight: number;
     previousNode: GraphNode | null;
     isInShortestPath: boolean;
+    // the following are for a* search
+    gScore?: number,
+    fScore?: number,
+    hScore?: number,
 };
 
 export type GraphAlgorithmResult = {

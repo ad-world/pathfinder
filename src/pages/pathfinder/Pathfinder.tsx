@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Navigation from "../../components/navigation/Navigation";
 import {
   CellSizePixels,
+  calculateGridSize,
   createGrid,
   getWeightedNodes,
   removeDuplicateBasedOnFinalCell,
@@ -20,8 +21,7 @@ interface GridState {
 }
 
 const Pathfinder = () => {
-  const rows = 19;
-  const columns = 40;
+  const { rows, columns } = calculateGridSize();
 
   const [cellGrid, setCellGrid] = useState(createGrid(rows, columns));
   const [currentWeight, setCurrentWeight] = useState<WeightedNode>(getWeightedNodes()[0]);

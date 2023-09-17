@@ -167,7 +167,7 @@ const Navigation: React.FC<NavigationProps> = ({ cellGrid, setCellGrid, currentW
     }, [algorithm, cellGrid, setCellGrid]);
 
     return (
-        <Box maxH={"10%"} h="10%" p={6} w="100%">
+        <Box maxH={"10%"} h="10%" minH={"10%"} p={6} w="100%">
             <HStack justifyContent={"space-between"}>
                 <HStack gap={8}>
                     <Heading size={"md"}>Pathfinder</Heading>

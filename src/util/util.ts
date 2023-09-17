@@ -18,17 +18,6 @@ export enum Algorithms {
     A_STAR = "A* Search"
 }
 
-export function calculateGridDimensions(
-    screenWidth: number,
-    screenHeight: number,
-    cellSize: number
-) {
-    const columns = Math.floor(screenWidth / cellSize);
-    const rows = Math.floor(screenHeight / cellSize);
-
-    return { rows, columns };
-}
-
 export const createGrid = (rows: number, columns: number): GraphNode[][] => {
     const cellGrid: GraphNode[][] = [];
     for (let i = 0; i < rows; i++) {
@@ -221,4 +210,34 @@ export const removeWeights = (grid: GraphNode[][]): GraphNode[][] => {
     }
 
     return copy;
+}
+
+
+export const getNeighbors = (node: GraphNode, grid: GraphNode[][]): GraphNode[] => {
+    const { row, col } = node;
+
+    const dirs: number[][] = [
+        [0, 1],
+        [1, 0],
+        [-1, 0],
+        [0, -1],
+    ];
+
+    const res: GraphNode[] = [];
+
+    for(const dir of dirs) {
+        const newRow = row + dir[0];
+        const newCol = col + dir[1];
+
+        if(inBounds(newRow, newCol, grid)) res.push(grid[newRow][newCol])
+    }  
+
+    return res;
+}
+
+export const calculateGridSize = (): { rows: number, columns: number} => {
+    return {
+        rows: (window.innerHeight * 0.9) / (CellSizeNumber + 1),
+        columns: (window.innerWidth) / (CellSizeNumber + 2)
+    }
 }

@@ -6,22 +6,20 @@ export class PriorityQueue<T> {
     }
 
     public insert(priority: number, item: T): void {
-        if(this.data.length == 0) {
+        if (this.data.length === 0) {
             this.data.push([priority, item]);
             return;
         }
-
-        for(let index = 0; index < this.data.length; index++) {
-            if(index === this.data.length - 1) {
-                this.data.push([priority, item]);
-                return;
-            }
-
-            if(this.data[index][0] > priority) {
+    
+        for (let index = 0; index < this.data.length; index++) {
+            if (priority > this.data[index][0]) {
                 this.data.splice(index, 0, [priority, item]);
                 return;
             }
         }
+    
+        // If the new item has the lowest priority, add it to the end.
+        this.data.push([priority, item]);
     }
 
     public isEmpty(): boolean {
