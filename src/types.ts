@@ -28,9 +28,7 @@ export type GraphAlgorithmArgs = {
 };
 
 
-export type DistancePathMap = {
-    [x: string]: { distance: number; path: GraphNode[] };
-}
+export type DistancePathMap = Map<GraphNode, { distance: number, path: GraphNode[] }>;
 
 export type WeightedNode = {
     title: string,

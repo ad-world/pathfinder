@@ -6,7 +6,7 @@ export const START_NODE_COL = 10;
 export const FINISH_NODE_ROW = 10;
 export const FINISH_NODE_COL = 30;
 
-export const ANIMATION_SPEED = 10;
+export const ANIMATION_SPEED = 5;
 
 export const CellSizeNumber = 35;
 export const CellSizePixels = "35px";

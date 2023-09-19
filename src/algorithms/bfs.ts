@@ -1,6 +1,6 @@
 import { DistancePathMap, GraphAlgorithmArgs, GraphAlgorithmResult, GraphNode } from "../types";
 import { Queue } from "../util/queue";
-import { cellString, inBounds, unVisitAllNodes } from "../util/util";
+import { inBounds, unVisitAllNodes } from "../util/util";
 
 export const bfs = (args: GraphAlgorithmArgs): GraphAlgorithmResult => {
     const { cellGrid, startNode, endNode } = args;
@@ -16,13 +16,13 @@ export const bfs = (args: GraphAlgorithmArgs): GraphAlgorithmResult => {
 
     const copy = [...unVisitAllNodes(cellGrid)];
 
-    const distancePathMap: DistancePathMap = {};
+    const distancePathMap: DistancePathMap = new Map();
     startNode.isVisited = true;
     q.enqueue(startNode);
-    distancePathMap[cellString(startNode.row, startNode.col)] = {
+    distancePathMap.set(startNode, {
         distance: 0,
         path: [],
-    };
+    });
 
     while (!q.isEmpty) {
         const top = q.dequeue();
@@ -41,20 +41,19 @@ export const bfs = (args: GraphAlgorithmArgs): GraphAlgorithmResult => {
             if (inBounds(newRow, newCol, copy)) {
                 const newNode = copy[newRow][newCol];
                 if (!newNode.isVisited && !newNode.isWall) {
-                    const oldNodeMetadata =
-                        distancePathMap[cellString(top.row, top.col)];
+                    const oldNodeMetadata = distancePathMap.get(top)!;
                     newNode.isVisited = true;
-                    distancePathMap[cellString(newNode.row, newNode.col)] = {
+                    distancePathMap.set(newNode, {
                         distance: oldNodeMetadata.distance + 1,
                         path: [...oldNodeMetadata.path, top],
-                    };
+                    });
                     q.enqueue(newNode);
                 }
             }
         }
     }
 
-    const result = distancePathMap[cellString(endNode.row, endNode.col)];
+    const result = distancePathMap.get(endNode)!;
 
     return {
         cellGrid: copy,
