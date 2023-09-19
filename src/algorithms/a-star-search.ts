@@ -108,7 +108,7 @@ export const a_star_search = (
                     continue;
                 }
 
-                const score = node.gScore || 0 + neighbor.weight;
+                const score = (node.gScore || 0) + neighbor.weight;
                 if(score < neighbor.gScore!) {
                     neighbor.gScore = score;
                     neighbor.hScore = heuristic_cost_estimate(startNode, neighbor, endNode);
