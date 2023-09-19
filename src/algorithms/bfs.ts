@@ -1,4 +1,4 @@
-import { DistancePathMap, GraphAlgorithmArgs, GraphAlgorithmResult, GraphNode } from "../types";
+import { DistancePathMapNew, GraphAlgorithmArgs, GraphAlgorithmResult, GraphNode } from "../types";
 import { Queue } from "../util/queue";
 import { inBounds, unVisitAllNodes } from "../util/util";
 
@@ -16,7 +16,7 @@ export const bfs = (args: GraphAlgorithmArgs): GraphAlgorithmResult => {
 
     const copy = [...unVisitAllNodes(cellGrid)];
 
-    const distancePathMap: DistancePathMap = new Map();
+    const distancePathMap: DistancePathMapNew = new Map();
     startNode.isVisited = true;
     q.enqueue(startNode);
     distancePathMap.set(startNode, {
