@@ -1,4 +1,4 @@
-import { Box, Button, Checkbox, HStack, Heading, Menu, MenuButton, MenuItem, MenuList, Select, Text } from "@chakra-ui/react";
+import { Box, Button, HStack, Heading, Menu, MenuButton, MenuItem, MenuList, Select, Text } from "@chakra-ui/react";
 import {
     ANIMATION_SPEED,
     Algorithms,
@@ -18,6 +18,7 @@ import Legend from "../legend/Legend";
 import { dijkstra } from "../../algorithms/dijkstra";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { a_star_search } from "../../algorithms/a-star-search";
+import { Colors } from "../../util/colors";
 
 interface NavigationProps {
     cellGrid: GraphNode[][];
@@ -206,18 +207,21 @@ const Navigation: React.FC<NavigationProps> = ({ cellGrid, setCellGrid, currentW
                     <Menu>
                         <MenuButton as={Button} border={'1px solid'}>
                             <HStack>
-                                <Text>{currentWeight?.title}</Text>
+                                <Text>{isDrawingWall ? 'Wall ' : currentWeight?.title}</Text>
                                 <Box
                                     minW={"15px"}
                                     minH={"15px"}
-                                    bgColor={currentWeight?.color}
+                                    bgColor={isDrawingWall ? Colors.WallNode : currentWeight?.color}
                                 ></Box>
                             </HStack>
                         </MenuButton>
                         <MenuList>
                             {weightedNodes.map(item => {
                                 return (
-                                    <MenuItem onClick={() => setCurrentWeight(item)}>
+                                    <MenuItem onClick={() => {
+                                        setCurrentWeight(item);
+                                        setIsDrawingWall(false);
+                                    }}>
                                         <HStack>
                                             <Text>{item.title}</Text>
                                             <Box
@@ -229,11 +233,15 @@ const Navigation: React.FC<NavigationProps> = ({ cellGrid, setCellGrid, currentW
                                     </MenuItem>
                                 )
                             })}
+                            <MenuItem onClick={() => setIsDrawingWall(true)}>
+                                <HStack>
+                                    <Text>Wall</Text>
+                                    <Box minW={"15px"} minH={"15px"} bgColor={Colors.WallNode}>
+                                    </Box>
+                                </HStack>
+                            </MenuItem>
                         </MenuList>
                     </Menu>
-                    <Checkbox size='lg' isChecked={isDrawingWall} onChange={e => setIsDrawingWall(e.target.checked)} colorScheme='blackAlpha'>
-                        Draw wall instead?
-                    </Checkbox>
                 </HStack>
 
                 <HStack>
